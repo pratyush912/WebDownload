@@ -15,22 +15,12 @@ import com.pratz.exception.FileWritingExecption;
 
 public class UrlDownloader {
 
-	public File downloadUrl(String url){
-		File uniqueFile = null;
+	private Document doc;
+
+	public Document downloadUrl(String url){
 		try {
 			//get the url response as document
-			Document doc = Jsoup.connect(url).get();
-			
-			//convert document to string
-			String htmlContent = doc.html();
-			
-			File downloadDir = createDownloadDir();
-			
-			//creating unique file inside the download directory
-			uniqueFile = File.createTempFile("main", ".html", downloadDir);
-			
-			AppUtils.writeTextToFile(htmlContent, uniqueFile);
-			
+			doc = Jsoup.connect(url).get();
 		}catch(MalformedURLException e){
 			System.err.println("The url is not proper" + e);
 		}catch(HttpStatusException e){
@@ -39,14 +29,25 @@ public class UrlDownloader {
 			
 		}catch(SocketTimeoutException e){
 			
-		}catch(FileWritingExecption e){
-			System.err.println("Error occurred while writing to file");
-		}
-		catch (IOException e) {
+		}catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return uniqueFile;
+		return doc;
+	}
+	
+	public void writeToFile(File downloadDir){
+		//convert document to string
+		String htmlContent = doc.html();
+
+		//creating unique file inside the download directory
+		File uniqueFile  = null;
+		try{
+			uniqueFile= File.createTempFile("main", ".html", downloadDir);
+			AppUtils.writeTextToFile(htmlContent, uniqueFile);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 	
 	private File createDownloadDir(){

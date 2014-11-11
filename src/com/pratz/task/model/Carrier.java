@@ -14,6 +14,8 @@ public class Carrier {
 	private List<AppImage> imageUrls = new ArrayList<>();
 	private List<AppImage> jsUrls = new ArrayList<>();
 	private List<AppImage> cssUrls = new ArrayList<>();
+	private List<AppImage> otherUrls = new ArrayList<>();
+	private List<AppImage> extUrls = new ArrayList<>();
 
 	public String getUrl() {
 		return url;
@@ -73,6 +75,30 @@ public class Carrier {
 
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
+	}
+
+	public List<AppImage> getOtherUrls() {
+		return otherUrls;
+	}
+
+	public void setOtherUrls(List<AppImage> otherUrls) {
+		this.otherUrls = otherUrls;
+	}
+	
+	public void addOtherUrl(AppImage otherUrl){
+		this.otherUrls.add(otherUrl);
+	}
+
+	public List<AppImage> getExtUrls() {
+		return extUrls;
+	}
+
+	public void setExtUrls(List<AppImage> extUrls) {
+		this.extUrls = extUrls;
+	}
+	
+	public void addExtUrl(AppImage extUrl){
+		this.extUrls.add(extUrl);
 	}
 	
 }

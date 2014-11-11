@@ -1,5 +1,8 @@
 package com.pratz.parser;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -20,8 +23,13 @@ public class HtmlParser {
 		for(Element img : imgLst){
 			String imgUrl = img.absUrl("src");
 			if(imgUrl!=null){
-				String storeUrl = img.attr("src").substring(1);
-				carrier.addImageUrl(new AppImage(imgUrl, storeUrl) );	
+				String storeUrl = img.attr("src");
+				try {
+					new URL(storeUrl);
+					carrier.addExtUrl(new AppImage(imgUrl, storeUrl));
+				} catch (MalformedURLException e) {
+					carrier.addImageUrl(new AppImage(imgUrl, storeUrl));
+				}
 			}
 		}
 		
@@ -30,8 +38,14 @@ public class HtmlParser {
 		for(Element link : linkElements){
 			String cssUrl = link.absUrl("href");
 			if(cssUrl!=null){
-				String storeUrl = link.attr("href").substring(1);
-				carrier.addCssUrl(new AppImage(cssUrl, storeUrl));
+				String storeUrl = link.attr("href");
+				try {
+					new URL(storeUrl);
+					carrier.addExtUrl(new AppImage(cssUrl, storeUrl));
+				} catch (MalformedURLException e) {
+					carrier.addCssUrl(new AppImage(cssUrl, storeUrl));
+				}
+				
 			}
 		}
 		
@@ -39,14 +53,31 @@ public class HtmlParser {
 		for(Element scriptEle : scriptElements){
 			String scriptUrl = scriptEle.absUrl("src");
 			if(scriptUrl!=null && !scriptUrl.isEmpty()){
-				String storeUrl = scriptEle.attr("src").substring(1);
-				carrier.addJsUrl(new AppImage(scriptUrl, storeUrl));
+				String storeUrl = scriptEle.attr("src");
+				try {
+					new URL(storeUrl);
+					carrier.addExtUrl(new AppImage(scriptUrl, storeUrl));
+				} catch (MalformedURLException e) {
+					carrier.addJsUrl(new AppImage(scriptUrl, storeUrl));
+				}
 			}
 			
 		}
 		
-		
-		
+		Elements anchorElements = document.getElementsByTag("a");
+		for(Element anchorEle : anchorElements){
+			String anchorUrl = anchorEle.absUrl("href");
+			if(anchorUrl!=null && !anchorUrl.isEmpty()){
+				String storeUrl = anchorEle.attr("href");
+				try {
+					new URL(storeUrl);
+					carrier.addExtUrl(new AppImage(anchorUrl, storeUrl));
+				} catch (MalformedURLException e) {
+					carrier.addOtherUrl(new AppImage(anchorUrl, storeUrl));
+				}
+			}
+			
+		}
 		return carrier;
 	}
 

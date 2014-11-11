@@ -39,10 +39,15 @@ public class AppUtils {
 		}
 	}
 	
-	public static File downloadFile(String url, String filePath) throws IOException{
+	public static File downloadFile(String url, String filePath, File parent) throws IOException{
 		File file = null;
 		if(url!=null && filePath != null){
-			file = new File(filePath);
+			if(parent!=null){
+				file = new File(parent.getAbsolutePath()+filePath);	
+			}else{
+				file = new File(filePath);
+			}
+			
 			File parentDir = file.getParentFile();
 			if(!parentDir.exists()){
 				if(!parentDir.mkdirs()){
@@ -65,6 +70,22 @@ public class AppUtils {
 			}
 		}
 		return file;
+	}
+	
+	public static File createUniqueDir() throws IOException{
+		
+		File unique = File.createTempFile("download", Long.toString(System.nanoTime()), new File("download"));
+		
+		if(!(unique.delete()))
+	    {
+	        throw new IOException("Could not delete temp file: " + unique.getAbsolutePath());
+	    }
+
+	    if(!(unique.mkdir()))
+	    {
+	        throw new IOException("Could not create temp directory: " + unique.getAbsolutePath());
+	    }
+	    return unique;
 	}
 	
 	

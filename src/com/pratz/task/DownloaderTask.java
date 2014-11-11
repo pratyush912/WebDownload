@@ -15,10 +15,10 @@ public class DownloaderTask extends AbstractTask{
 		if(url==null){
 			throw new TaskException("Url is null");
 		}
-		UrlDownloader urlDownloader = new UrlDownloader();
-		File downloadedFile = urlDownloader.downloadUrl(url);
-		
-		carrier.setRootFile(downloadedFile);
+//		UrlDownloader urlDownloader = new UrlDownloader();
+//		File downloadedFile = urlDownloader.downloadUrl(url);
+//		
+//		carrier.setRootFile(downloadedFile);
 	}
 
 	

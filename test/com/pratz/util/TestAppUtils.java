@@ -22,9 +22,15 @@ public class TestAppUtils {
 		Carrier carrier = HtmlParser.parseHTML(doc);
 		List<AppImage> imageUrls = carrier.getImageUrls();
 		for(AppImage img : imageUrls){
-			File file = AppUtils.downloadFile(img.getDownloadUrl(), img.getStoreUrl().substring(1));
+			File file = AppUtils.downloadFile(img.getDownloadUrl(), img.getStoreUrl().substring(1), null);
 			assertTrue(file.exists());
 		}
+	}
+	
+	@Test
+	public void testCreateUniqueDir() throws IOException{
+		File uniqueDir = AppUtils.createUniqueDir();
+		assertTrue(uniqueDir.exists() && uniqueDir.isDirectory());
 	}
 
 }
