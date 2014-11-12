@@ -10,7 +10,7 @@ public class TestDownloadWebsite {
 
 	@Test
 	public void testDownloadWebsite() throws IOException {
-		DownloadWebsite.download(null, "http://jsoup.org");
+		DownloadWebsite.download(null, "http://www.jsoup.org/");
 	}
 	
 	@Test

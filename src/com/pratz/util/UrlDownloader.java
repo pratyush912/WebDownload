@@ -33,15 +33,17 @@ public class UrlDownloader {
 		return doc;
 	}
 	
-	public void writeToFile(File downloadDir){
+	public void writeToFile(File downloadDir, String filePath){
 		//convert document to string
 		String htmlContent = doc.html();
 
-		//creating unique file inside the download directory
-		File uniqueFile  = null;
+		File mainFile  = null;
 		try{
-			uniqueFile= File.createTempFile("main", ".html", downloadDir);
-			AppUtils.writeTextToFile(htmlContent, uniqueFile);
+			if(filePath==null){
+				filePath = downloadDir.getAbsolutePath()+"/index.html";
+			}
+			mainFile= new File(filePath);
+			AppUtils.writeTextToFile(htmlContent, mainFile);
 		}catch(IOException e){
 			e.printStackTrace();
 		}

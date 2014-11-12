@@ -1,9 +1,6 @@
 package com.pratz.task;
 
-import java.io.File;
-
 import com.pratz.exception.TaskException;
-import com.pratz.util.UrlDownloader;
 
 
 

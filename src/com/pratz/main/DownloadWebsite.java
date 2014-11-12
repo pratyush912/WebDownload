@@ -10,7 +10,9 @@ import com.pratz.parser.HtmlParser;
 import com.pratz.task.model.AppImage;
 import com.pratz.task.model.Carrier;
 import com.pratz.util.AppUtils;
+import com.pratz.util.SourceIdentifier;
 import com.pratz.util.UrlDownloader;
+import com.pratz.util.SourceIdentifier.SourceType;
 
 public class DownloadWebsite {
 	
@@ -29,6 +31,10 @@ public class DownloadWebsite {
 	 * @throws IOException
 	 */
 	public static File download(File parentDir, String url) throws IOException {
+		return download(parentDir, url,null);
+	}
+	
+	public static File download(File parentDir, String url, String filePath) throws IOException {
 		UrlDownloader urlDownload = new UrlDownloader();
 		Document document = urlDownload.downloadUrl(url);
 		
@@ -36,7 +42,7 @@ public class DownloadWebsite {
 			parentDir = AppUtils.createUniqueDir();
 		}
 		
-		urlDownload.writeToFile(parentDir);
+		urlDownload.writeToFile(parentDir,filePath);
 		
 		Carrier carrier = HtmlParser.parseHTML(document);
 		
@@ -52,19 +58,52 @@ public class DownloadWebsite {
 		
 		return parentDir;
 	}
+	
+	private static void downloadFileRecursively(List<AppImage> fileUrls, File parentDir) {
+		if(!fileUrls.isEmpty()){
+			for(AppImage url : fileUrls){
+				try {
+					
+					modifyUrl(url);
+//					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
+					DownloadWebsite.download(parentDir, url.getDownloadUrl());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	private static void downloadFiles(List<AppImage> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {
-					if(url.getStoreUrl().endsWith("/")){
-						url.setStoreUrl(url.getStoreUrl()+"index.html");
-					}
+					
+					modifyUrl(url);
 					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+
+	private static void modifyUrl(AppImage url) {
+		switch (SourceIdentifier.identifySource(url.getStoreUrl())) {
+		case DIRECTORY:
+			url.setStoreUrl(url.getStoreUrl()+ "index.html");
+			break;
+		case ID:
+			url.setStoreUrl(url.getStoreUrl().replace("#","/"));
+			break;
+		case FILE:
+			if(!url.getStoreUrl().startsWith("/")){
+				url.setStoreUrl("/"+url.getStoreUrl());
+			}
+			break;
+		default:
+			break;
 		}
 	}
 

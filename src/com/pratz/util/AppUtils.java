@@ -29,12 +29,12 @@ public class AppUtils {
 					System.err.println("Error occurred while creating file");
 					throw e;
 				}
-			}
-			try(BufferedWriter bw = new BufferedWriter(new FileWriter(file));){
-				bw.write(text);	
-			} catch (IOException e) {
-				System.err.println("Error occurred while writing to file file");
-				throw new FileWritingExecption(e);
+				try(BufferedWriter bw = new BufferedWriter(new FileWriter(file));){
+					bw.write(text);	
+				} catch (IOException e) {
+					System.err.println("Error occurred while writing to file file");
+					throw new FileWritingExecption(e);
+				}
 			}
 		}
 	}
@@ -48,24 +48,26 @@ public class AppUtils {
 				file = new File(filePath);
 			}
 			
-			File parentDir = file.getParentFile();
-			if(!parentDir.exists()){
-				if(!parentDir.mkdirs()){
-					throw new IOException("Unable to create directory structure");
+			if(!file.exists()){
+				File parentDir = file.getParentFile();
+				if(!parentDir.exists()){
+					if(!parentDir.mkdirs()){
+						throw new IOException("Unable to create directory structure");
+					}
 				}
-			}
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				System.err.println("Error occurred while creating file");
-				throw e;
-			}
-			URL u = new URL(url);
-			try(InputStream is = u.openStream();
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
-				int b;
-				while((b= is.read())!=-1){
-					bos.write(b);
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					System.err.println("Error occurred while creating file");
+					throw e;
+				}
+				URL u = new URL(url);
+				try(InputStream is = u.openStream();
+						BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
+					int b;
+					while((b= is.read())!=-1){
+						bos.write(b);
+					}
 				}
 			}
 		}
