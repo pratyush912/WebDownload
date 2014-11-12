@@ -72,19 +72,36 @@ public class AppUtils {
 		return file;
 	}
 	
+	/**
+	 * Creates unique directory
+	 * 
+	 * @return a file object 
+	 * @throws IOException
+	 */
 	public static File createUniqueDir() throws IOException{
 		
-		File unique = File.createTempFile("download", Long.toString(System.nanoTime()), new File("download"));
+		File downloadDir = new File("download");
 		
-		if(!(unique.delete()))
-	    {
+		//checking and creating the download directory 
+		if(!downloadDir.exists()){
+			if(!downloadDir.mkdir()){
+				throw new IOException("Could not create the download directory" + downloadDir.getAbsolutePath());
+			}
+		}
+		
+		//creating a unique file inside download directory
+		File unique = File.createTempFile("download", Long.toString(System.nanoTime()), downloadDir);
+		
+		//deleting the unique file
+		if(!(unique.delete())){
 	        throw new IOException("Could not delete temp file: " + unique.getAbsolutePath());
 	    }
 
-	    if(!(unique.mkdir()))
-	    {
+		//creating the unique directory 
+	    if(!(unique.mkdir())){
 	        throw new IOException("Could not create temp directory: " + unique.getAbsolutePath());
 	    }
+	    
 	    return unique;
 	}
 	

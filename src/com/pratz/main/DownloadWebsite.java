@@ -14,16 +14,6 @@ import com.pratz.util.UrlDownloader;
 
 public class DownloadWebsite {
 	
-	public static void main(String[] args) {
-		try {
-			DownloadWebsite downWeb = new DownloadWebsite(null, "http://jsoup.org");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
 	public DownloadWebsite(File parentDir, String url) throws IOException {
 		UrlDownloader urlDownload = new UrlDownloader();
 		Document document = urlDownload.downloadUrl(url);
@@ -52,8 +42,10 @@ public class DownloadWebsite {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {
-					if(!"/".equals(url.getStoreUrl()))
-						AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
+					if(url.getStoreUrl().endsWith("/")){
+						url.setStoreUrl(url.getStoreUrl()+"index.html");
+					}
+					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
