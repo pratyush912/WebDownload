@@ -10,9 +10,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 
-import com.pratz.constant.AppConstants;
-import com.pratz.exception.FileWritingExecption;
-
 public class UrlDownloader {
 
 	private Document doc;
@@ -48,18 +45,6 @@ public class UrlDownloader {
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-	}
-	
-	private File createDownloadDir(){
-		File downloadDir = new File(AppConstants.DOWNLOAD_DIRECTORY);
-		if(!downloadDir.exists()){
-			if(downloadDir.mkdirs()){
-				//TODO log successful msg
-			}else{
-				//throw exception and exit
-			}
-		}
-		return downloadDir;
 	}
 	
 }

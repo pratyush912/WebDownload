@@ -14,7 +14,21 @@ import com.pratz.util.UrlDownloader;
 
 public class DownloadWebsite {
 	
-	public DownloadWebsite(File parentDir, String url) throws IOException {
+	private DownloadWebsite() {
+		// 
+	}
+	
+	
+	/**
+	 * Downloads a provided url recursively.<br>
+	 * If parent directory is provided then all the website content goes in the parent directory
+	 * 
+	 * @param parentDir
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public static File download(File parentDir, String url) throws IOException {
 		UrlDownloader urlDownload = new UrlDownloader();
 		Document document = urlDownload.downloadUrl(url);
 		
@@ -36,9 +50,10 @@ public class DownloadWebsite {
 		downloadFiles(imgUrls,parentDir);
 		downloadFiles(otherUrls,parentDir);
 		
+		return parentDir;
 	}
 
-	private void downloadFiles(List<AppImage> fileUrls, File parentDir) {
+	private static void downloadFiles(List<AppImage> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {

@@ -10,7 +10,12 @@ public class TestDownloadWebsite {
 
 	@Test
 	public void testDownloadWebsite() throws IOException {
-		DownloadWebsite downWeb = new DownloadWebsite(null, "http://getbootstrap.com");
+		DownloadWebsite.download(null, "http://jsoup.org");
+	}
+	
+	@Test
+	public void testHashTagReferences() throws IOException{
+		DownloadWebsite.download(null, "http://getbootstrap.com/");
 	}
 
 }
