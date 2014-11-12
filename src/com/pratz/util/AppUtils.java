@@ -23,6 +23,9 @@ public class AppUtils {
 	public static void writeTextToFile(String text, File file) throws IOException {
 		if(file!=null){
 			if(!file.exists()){
+				if(!file.getParentFile().exists()){
+					file.getParentFile().mkdirs();
+				}
 				try {
 					file.createNewFile();
 				} catch (IOException e) {

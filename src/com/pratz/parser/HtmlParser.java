@@ -66,9 +66,9 @@ public class HtmlParser {
 		
 		Elements anchorElements = document.getElementsByTag("a");
 		for(Element anchorEle : anchorElements){
-			String anchorUrl = anchorEle.absUrl("href");
+			String anchorUrl = anchorEle.absUrl("href").split("#|\\?")[0];
 			if(anchorUrl!=null && !anchorUrl.isEmpty()){
-				String storeUrl = anchorEle.attr("href");
+				String storeUrl = anchorEle.attr("href").split("#|\\?")[0];
 				try {
 					new URL(storeUrl);
 					carrier.addExtUrl(new AppImage(anchorUrl, storeUrl));

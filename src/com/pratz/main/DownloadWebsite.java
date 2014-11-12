@@ -12,7 +12,6 @@ import com.pratz.task.model.Carrier;
 import com.pratz.util.AppUtils;
 import com.pratz.util.SourceIdentifier;
 import com.pratz.util.UrlDownloader;
-import com.pratz.util.SourceIdentifier.SourceType;
 
 public class DownloadWebsite {
 	
@@ -54,7 +53,7 @@ public class DownloadWebsite {
 		downloadFiles(cssUrls,parentDir);
 		downloadFiles(jsUrls,parentDir);
 		downloadFiles(imgUrls,parentDir);
-		downloadFiles(otherUrls,parentDir);
+		downloadFileRecursively(otherUrls,parentDir);
 		
 		return parentDir;
 	}
@@ -66,7 +65,11 @@ public class DownloadWebsite {
 					
 					modifyUrl(url);
 //					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
-					DownloadWebsite.download(parentDir, url.getDownloadUrl());
+					File downloadFile = new File(parentDir.getAbsolutePath()+url.getStoreUrl());
+					if(downloadFile.exists()){
+						continue;
+					}
+					DownloadWebsite.download(parentDir, url.getDownloadUrl(),url.getStoreUrl());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -78,7 +81,6 @@ public class DownloadWebsite {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {
-					
 					modifyUrl(url);
 					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
 				} catch (IOException e) {

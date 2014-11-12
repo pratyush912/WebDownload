@@ -41,6 +41,8 @@ public class UrlDownloader {
 		try{
 			if(filePath==null){
 				filePath = downloadDir.getAbsolutePath()+"/index.html";
+			}else{
+				filePath = downloadDir.getAbsolutePath() + filePath;
 			}
 			mainFile= new File(filePath);
 			AppUtils.writeTextToFile(htmlContent, mainFile);
