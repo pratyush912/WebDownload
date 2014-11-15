@@ -30,6 +30,9 @@ public class HtmlParser {
 				} catch (MalformedURLException e) {
 					String baseUri = img.baseUri();
 					storeUrl = imgUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
+					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
+						continue;
+					}
 					carrier.addImageUrl(new AppImage(imgUrl, storeUrl));
 				}
 			}
@@ -47,6 +50,9 @@ public class HtmlParser {
 				} catch (MalformedURLException e) {
 					String baseUri = link.baseUri();
 					storeUrl = cssUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
+					if(storeUrl.charAt(1)=='.'){
+						continue;
+					}
 					carrier.addCssUrl(new AppImage(cssUrl, storeUrl));
 				}
 				
@@ -64,6 +70,9 @@ public class HtmlParser {
 				} catch (MalformedURLException e) {
 					String baseUri = scriptEle.baseUri();
 					storeUrl = scriptUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
+					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
+						continue;
+					}
 					carrier.addJsUrl(new AppImage(scriptUrl, storeUrl));
 				}
 			}
@@ -81,6 +90,9 @@ public class HtmlParser {
 				} catch (MalformedURLException e) {
 					String baseUri = anchorEle.baseUri();
 					storeUrl = anchorUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
+					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
+						continue;
+					}
 					carrier.addOtherUrl(new AppImage(anchorUrl, storeUrl));
 				}
 			}

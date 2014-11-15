@@ -35,7 +35,8 @@ public class UrlDownloader {
 	
 	public void writeToFile(File downloadDir, String filePath){
 		//convert document to string
-		String htmlContent = doc.html();
+		String htmlContent =null;
+		htmlContent = doc.html();
 
 		File mainFile  = null;
 		try{
@@ -47,6 +48,8 @@ public class UrlDownloader {
 			mainFile= new File(filePath);
 			AppUtils.writeTextToFile(htmlContent, mainFile);
 		}catch(IOException e){
+			e.printStackTrace();
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}

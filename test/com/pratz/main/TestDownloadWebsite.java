@@ -17,5 +17,10 @@ public class TestDownloadWebsite {
 	public void testHashTagReferences() throws IOException{
 		DownloadWebsite.download(null, "http://getbootstrap.com/");
 	}
+	
+	@Test
+	public void testNestedHtml() throws IOException{
+		DownloadWebsite.download(null, "http://nvie.com/posts/a-successful-git-branching-model/");
+	}
 
 }
