@@ -3,7 +3,7 @@ package com.pratz.util;
 public class SourceIdentifier {
 	
 	public enum SourceType{
-		ID, FILE, DIRECTORY
+		ID, FILE, DIRECTORY, OTHER
 	}
 	
 	public static SourceType identifySource(String string){
@@ -11,8 +11,10 @@ public class SourceIdentifier {
 			return SourceType.ID;
 		}else if(string.endsWith("/")){
 			return SourceType.DIRECTORY;
-		}else {
+		}else if(string.contains(".")){
 			return SourceType.FILE;
+		}else{
+			return SourceType.OTHER;
 		}
 	}
 

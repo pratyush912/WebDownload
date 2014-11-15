@@ -62,7 +62,14 @@ public class DownloadWebsite {
 			}
 
 			urlDownload.writeToFile(parentDir,filePath);
-
+			if(filePath!=null){
+				downloadedFiles.add(parentDir+filePath);	
+			}else{
+				downloadedFiles.add(parentDir+"/index.html");
+			}
+			
+			
+			
 			Carrier carrier = HtmlParser.parseHTML(document);
 
 			List<AppImage> cssUrls = carrier.getCssUrls();
@@ -107,6 +114,7 @@ public class DownloadWebsite {
 				try {
 					if(modifyUrl(url)){
 						AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);	
+						downloadedFiles.add(url.getStoreUrl());
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -129,6 +137,8 @@ public class DownloadWebsite {
 				url.setStoreUrl("/"+url.getStoreUrl());
 			}
 			break;
+		case OTHER:
+			url.setStoreUrl(url.getStoreUrl()+"/index.html");
 		default:
 			break;
 		}

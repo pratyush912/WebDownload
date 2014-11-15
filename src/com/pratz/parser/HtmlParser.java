@@ -31,8 +31,9 @@ public class HtmlParser {
 					String baseUri = img.baseUri();
 					storeUrl = imgUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
-						continue;
+						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
+					imgUrl = imgUrl.replaceAll("(\\.\\./)+", "");
 					carrier.addImageUrl(new AppImage(imgUrl, storeUrl));
 				}
 			}
@@ -50,9 +51,10 @@ public class HtmlParser {
 				} catch (MalformedURLException e) {
 					String baseUri = link.baseUri();
 					storeUrl = cssUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
-					if(storeUrl.charAt(1)=='.'){
-						continue;
+					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
+						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
+					cssUrl = cssUrl.replaceAll("(\\.\\./)+", "");
 					carrier.addCssUrl(new AppImage(cssUrl, storeUrl));
 				}
 				
@@ -71,8 +73,9 @@ public class HtmlParser {
 					String baseUri = scriptEle.baseUri();
 					storeUrl = scriptUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
-						continue;
+						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
+					scriptUrl = scriptUrl.replaceAll("(\\.\\./)+", "");
 					carrier.addJsUrl(new AppImage(scriptUrl, storeUrl));
 				}
 			}
@@ -83,17 +86,21 @@ public class HtmlParser {
 		for(Element anchorEle : anchorElements){
 			String anchorUrl = anchorEle.absUrl("href").split("#|\\?")[0];
 			if(anchorUrl!=null && !anchorUrl.isEmpty()){
-				String storeUrl = anchorEle.attr("href").split("#|\\?")[0];
-				try {
-					new URL(storeUrl);
-					carrier.addExtUrl(new AppImage(anchorUrl, storeUrl));
-				} catch (MalformedURLException e) {
-					String baseUri = anchorEle.baseUri();
-					storeUrl = anchorUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
-					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
-						continue;
+				String[] splittedHref = anchorEle.attr("href").split("#|\\?");
+				if(splittedHref.length>0){
+					String storeUrl = splittedHref[0];
+					try {
+						new URL(storeUrl);
+						carrier.addExtUrl(new AppImage(anchorUrl, storeUrl));
+					} catch (MalformedURLException e) {
+						String baseUri = anchorEle.baseUri();
+						storeUrl = anchorUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
+						if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
+							storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
+						}
+						anchorUrl = anchorUrl.replaceAll("(\\.\\./)+", "");
+						carrier.addOtherUrl(new AppImage(anchorUrl, storeUrl));
 					}
-					carrier.addOtherUrl(new AppImage(anchorUrl, storeUrl));
 				}
 			}
 			
@@ -111,6 +118,12 @@ public class HtmlParser {
 	        }
 	    }
 	    return -1;
+	}
+	
+	public static void main(String[] args) {
+		String test = "http://getbootstrap.com/../";
+		System.out.println(test.replaceAll("(\\.\\./)+", ""));
+		
 	}
 
 }
