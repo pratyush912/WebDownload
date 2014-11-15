@@ -1,11 +1,15 @@
 package com.pratz.task.model;
 
-public class AppImage {
+/**
+ * Model file contains info about the extracted file from the html
+ *
+ */
+public class ExtractedFile {
 	
 	private String downloadUrl;
 	private String storeUrl;
 	
-	public AppImage(String downloadUrl, String storeUrl) {
+	public ExtractedFile(String downloadUrl, String storeUrl) {
 		this.setDownloadUrl(downloadUrl);
 		this.setStoreUrl(storeUrl);
 	}

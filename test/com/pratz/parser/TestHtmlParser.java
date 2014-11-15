@@ -28,6 +28,7 @@ public class TestHtmlParser {
 		assertFalse(carrier.getCssUrls().isEmpty());
 	}
 	
+	@Test
 	public void testJsHtmlParser() throws IOException{
 		Document doc = Jsoup.connect("http://jsoup.org").get();
 		Carrier carrier = HtmlParser.parseHTML(doc);

@@ -7,11 +7,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.pratz.task.model.AppImage;
+import com.pratz.task.model.ExtractedFile;
 import com.pratz.task.model.Carrier;
 
+/**
+ * This class is used for parsing the html file and extracting
+ * js,css,images and linked urls present in the html
+ *
+ */
 public class HtmlParser {
 	
+	/**
+	 * Parser the given document and extracts js css iamges and urls
+	 * 
+	 * @param document
+	 * @return
+	 */
 	public static Carrier parseHTML(Document document){
 		if(document==null){
 			throw new IllegalArgumentException("document object can not be null");
@@ -26,15 +37,16 @@ public class HtmlParser {
 				String storeUrl = img.attr("src");
 				try {
 					new URL(storeUrl);
-					carrier.addExtUrl(new AppImage(imgUrl, storeUrl));
+					carrier.addExtUrl(new ExtractedFile(imgUrl, storeUrl));
 				} catch (MalformedURLException e) {
 					String baseUri = img.baseUri();
+					if(!baseUri.endsWith("/")) baseUri = baseUri + "/";
 					storeUrl = imgUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
 						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
 					imgUrl = imgUrl.replaceAll("(\\.\\./)+", "");
-					carrier.addImageUrl(new AppImage(imgUrl, storeUrl));
+					carrier.addImageUrl(new ExtractedFile(imgUrl, storeUrl));
 				}
 			}
 		}
@@ -47,20 +59,22 @@ public class HtmlParser {
 				String storeUrl = link.attr("href");
 				try {
 					new URL(storeUrl);
-					carrier.addExtUrl(new AppImage(cssUrl, storeUrl));
+					carrier.addExtUrl(new ExtractedFile(cssUrl, storeUrl));
 				} catch (MalformedURLException e) {
 					String baseUri = link.baseUri();
+					if(!baseUri.endsWith("/")) baseUri = baseUri + "/";
 					storeUrl = cssUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
 						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
 					cssUrl = cssUrl.replaceAll("(\\.\\./)+", "");
-					carrier.addCssUrl(new AppImage(cssUrl, storeUrl));
+					carrier.addCssUrl(new ExtractedFile(cssUrl, storeUrl));
 				}
 				
 			}
 		}
 		
+		//Extract all script files
 		Elements scriptElements = document.getElementsByTag("script");
 		for(Element scriptEle : scriptElements){
 			String scriptUrl = scriptEle.absUrl("src");
@@ -68,20 +82,22 @@ public class HtmlParser {
 				String storeUrl = scriptEle.attr("src");
 				try {
 					new URL(storeUrl);
-					carrier.addExtUrl(new AppImage(scriptUrl, storeUrl));
+					carrier.addExtUrl(new ExtractedFile(scriptUrl, storeUrl));
 				} catch (MalformedURLException e) {
 					String baseUri = scriptEle.baseUri();
+					if(!baseUri.endsWith("/")) baseUri = baseUri + "/";
 					storeUrl = scriptUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 					if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
 						storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 					}
 					scriptUrl = scriptUrl.replaceAll("(\\.\\./)+", "");
-					carrier.addJsUrl(new AppImage(scriptUrl, storeUrl));
+					carrier.addJsUrl(new ExtractedFile(scriptUrl, storeUrl));
 				}
 			}
 			
 		}
 		
+		//Extract all links
 		Elements anchorElements = document.getElementsByTag("a");
 		for(Element anchorEle : anchorElements){
 			String anchorUrl = anchorEle.absUrl("href").split("#|\\?")[0];
@@ -91,15 +107,16 @@ public class HtmlParser {
 					String storeUrl = splittedHref[0];
 					try {
 						new URL(storeUrl);
-						carrier.addExtUrl(new AppImage(anchorUrl, storeUrl));
+						carrier.addExtUrl(new ExtractedFile(anchorUrl, storeUrl));
 					} catch (MalformedURLException e) {
 						String baseUri = anchorEle.baseUri();
+						if(!baseUri.endsWith("/")) baseUri = baseUri + "/";
 						storeUrl = anchorUrl.replace(baseUri.substring(0,nthIndexOf(baseUri, '/', 3)), "");
 						if(storeUrl.length()>1 && storeUrl.charAt(1)=='.'){
 							storeUrl = storeUrl.replaceAll("(\\.\\./)+", "");
 						}
 						anchorUrl = anchorUrl.replaceAll("(\\.\\./)+", "");
-						carrier.addOtherUrl(new AppImage(anchorUrl, storeUrl));
+						carrier.addOtherUrl(new ExtractedFile(anchorUrl, storeUrl));
 					}
 				}
 			}
@@ -108,9 +125,12 @@ public class HtmlParser {
 		return carrier;
 	}
 	
-	private static int nthIndexOf(String text, char needle, int n){
+	/**
+	 * For getting the nth index of a character
+	 */
+	private static int nthIndexOf(String text, char exChar, int n){
 	    for (int i = 0; i < text.length(); i++){
-	        if (text.charAt(i) == needle){
+	        if (text.charAt(i) == exChar){
 	            n--;
 	            if (n == 0){
 	                return i;
@@ -120,10 +140,4 @@ public class HtmlParser {
 	    return -1;
 	}
 	
-	public static void main(String[] args) {
-		String test = "http://getbootstrap.com/../";
-		System.out.println(test.replaceAll("(\\.\\./)+", ""));
-		
-	}
-
 }

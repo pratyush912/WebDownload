@@ -9,21 +9,57 @@ import java.util.Set;
 import org.jsoup.nodes.Document;
 
 import com.pratz.parser.HtmlParser;
-import com.pratz.task.model.AppImage;
+import com.pratz.task.model.ExtractedFile;
 import com.pratz.task.model.Carrier;
 import com.pratz.util.AppUtils;
 import com.pratz.util.SourceIdentifier;
 import com.pratz.util.UrlDownloader;
 
+/**
+ * This class is used to download a given url and files present in the url recursively
+ * 
+ * <br>
+ * 
+ * <b>Please note</b> It does not download the external urls
+ */
 public class DownloadWebsite {
 	
+	/**
+	 * A set which maintains download file paths
+	 */
 	private Set<String> downloadedFiles;
+	/**
+	 * The root directory
+	 */
 	private File parentDir;
+	/**
+	 * The url to be downloaded
+	 */
 	private String url;
+	/**
+	 * File path extracted from the url
+	 */
 	private String filePath;
+	
+	/**
+	 * Takes a url as an input
+	 * 
+	 * @param url
+	 */
+	public DownloadWebsite(String url){
+		this(null,null,url,null);
+	}
 
 	
-	public DownloadWebsite(Set<String> downloadedFiles, File parentDir, String url, String filePath) {
+	/**
+	 * Private constructor used internally
+	 * 
+	 * @param downloadedFiles
+	 * @param parentDir
+	 * @param url
+	 * @param filePath
+	 */
+	private DownloadWebsite(Set<String> downloadedFiles, File parentDir, String url, String filePath) {
 		if(downloadedFiles==null){
 			downloadedFiles = new HashSet<>();
 		}
@@ -33,24 +69,12 @@ public class DownloadWebsite {
 		this.filePath = filePath;
 	}
 	
-	public DownloadWebsite(String url){
-		this(null,null,url,null);
-	}
-	
-	
 	/**
-	 * Downloads a provided url recursively.<br>
-	 * If parent directory is provided then all the website content goes in the parent directory
+	 * Downloads the provided url in the contructor recursively
 	 * 
-	 * @param parentDir
-	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
-/*	public static File download(File parentDir, String url) throws IOException {
-		return download(parentDir, url,null);
-	}
-*/	
 	public File download() throws IOException {
 		UrlDownloader urlDownload = new UrlDownloader();
 		Document document = urlDownload.downloadUrl(url);
@@ -58,6 +82,7 @@ public class DownloadWebsite {
 		if(document!=null){
 		
 			if(parentDir==null){
+				//creating a new unique directory
 				parentDir = AppUtils.createUniqueDir();
 			}
 
@@ -72,10 +97,10 @@ public class DownloadWebsite {
 			
 			Carrier carrier = HtmlParser.parseHTML(document);
 
-			List<AppImage> cssUrls = carrier.getCssUrls();
-			List<AppImage> jsUrls = carrier.getJsUrls();
-			List<AppImage> imgUrls = carrier.getImageUrls();
-			List<AppImage> otherUrls = carrier.getOtherUrls();
+			List<ExtractedFile> cssUrls = carrier.getCssUrls();
+			List<ExtractedFile> jsUrls = carrier.getJsUrls();
+			List<ExtractedFile> imgUrls = carrier.getImageUrls();
+			List<ExtractedFile> otherUrls = carrier.getOtherUrls();
 
 			downloadFiles(cssUrls,parentDir);
 			downloadFiles(jsUrls,parentDir);
@@ -87,13 +112,18 @@ public class DownloadWebsite {
 		return parentDir;
 	}
 	
-	private void downloadFileRecursively(List<AppImage> fileUrls, File parentDir) {
+	/**
+	 * downloads htmls files present inside the parent url
+	 * 
+	 * @param fileUrls
+	 * @param parentDir
+	 */
+	private void downloadFileRecursively(List<ExtractedFile> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
-			for(AppImage url : fileUrls){
+			for(ExtractedFile url : fileUrls){
 				try {
 					
 					if(modifyUrl(url)){
-						//					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
 						File downloadFile = new File(parentDir.getAbsolutePath()+url.getStoreUrl());
 						if(downloadFile.exists()){
 							continue;
@@ -108,9 +138,15 @@ public class DownloadWebsite {
 		}
 	}
 
-	private void downloadFiles(List<AppImage> fileUrls, File parentDir) {
+	/**
+	 * downloads images/css/js files present inside the parent url
+	 * 
+	 * @param fileUrls
+	 * @param parentDir
+	 */
+	private void downloadFiles(List<ExtractedFile> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
-			for(AppImage url : fileUrls){
+			for(ExtractedFile url : fileUrls){
 				try {
 					if(modifyUrl(url)){
 						AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);	
@@ -124,7 +160,16 @@ public class DownloadWebsite {
 	}
 
 
-	private boolean modifyUrl(AppImage url) {
+	/**
+	 * modify the url to store in the file system
+	 * 
+	 * <br>
+	 * Checks the already downloaded files if the file already exists then returns false
+	 * 
+	 * @param url
+	 * @return true if file is not present already in the download file set else false
+	 */
+	private boolean modifyUrl(ExtractedFile url) {
 		switch (SourceIdentifier.identifySource(url.getStoreUrl())) {
 		case DIRECTORY:
 			url.setStoreUrl(url.getStoreUrl()+ "index.html");

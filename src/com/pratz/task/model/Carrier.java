@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model object that contains extracted information from the html
+ *
+ */
 public class Carrier {
 	
 	private String url;
@@ -11,11 +15,11 @@ public class Carrier {
 	
 	private String baseUrl;
 	
-	private List<AppImage> imageUrls = new ArrayList<>();
-	private List<AppImage> jsUrls = new ArrayList<>();
-	private List<AppImage> cssUrls = new ArrayList<>();
-	private List<AppImage> otherUrls = new ArrayList<>();
-	private List<AppImage> extUrls = new ArrayList<>();
+	private List<ExtractedFile> imageUrls = new ArrayList<>();
+	private List<ExtractedFile> jsUrls = new ArrayList<>();
+	private List<ExtractedFile> cssUrls = new ArrayList<>();
+	private List<ExtractedFile> otherUrls = new ArrayList<>();
+	private List<ExtractedFile> extUrls = new ArrayList<>();
 
 	public String getUrl() {
 		return url;
@@ -33,39 +37,39 @@ public class Carrier {
 		this.rootFile = rootFile;
 	}
 
-	public List<AppImage> getImageUrls() {
+	public List<ExtractedFile> getImageUrls() {
 		return imageUrls;
 	}
 
-	public void setImageUrls(List<AppImage> imageUrls) {
+	public void setImageUrls(List<ExtractedFile> imageUrls) {
 		this.imageUrls = imageUrls;
 	}
 	
-	public void addImageUrl(AppImage imageUrl){
+	public void addImageUrl(ExtractedFile imageUrl){
 		this.imageUrls.add(imageUrl);
 	}
 
-	public List<AppImage> getJsUrls() {
+	public List<ExtractedFile> getJsUrls() {
 		return jsUrls;
 	}
 
-	public void setJsUrls(List<AppImage> jsUrls) {
+	public void setJsUrls(List<ExtractedFile> jsUrls) {
 		this.jsUrls = jsUrls;
 	}
 	
-	public void addJsUrl(AppImage jsUrl){
+	public void addJsUrl(ExtractedFile jsUrl){
 		this.jsUrls.add(jsUrl);
 	}
 
-	public List<AppImage> getCssUrls() {
+	public List<ExtractedFile> getCssUrls() {
 		return cssUrls;
 	}
 
-	public void setCssUrls(List<AppImage> cssUrls) {
+	public void setCssUrls(List<ExtractedFile> cssUrls) {
 		this.cssUrls = cssUrls;
 	}
 	
-	public void addCssUrl(AppImage cssUrl){
+	public void addCssUrl(ExtractedFile cssUrl){
 		this.cssUrls.add(cssUrl);
 	}
 
@@ -77,27 +81,27 @@ public class Carrier {
 		this.baseUrl = baseUrl;
 	}
 
-	public List<AppImage> getOtherUrls() {
+	public List<ExtractedFile> getOtherUrls() {
 		return otherUrls;
 	}
 
-	public void setOtherUrls(List<AppImage> otherUrls) {
+	public void setOtherUrls(List<ExtractedFile> otherUrls) {
 		this.otherUrls = otherUrls;
 	}
 	
-	public void addOtherUrl(AppImage otherUrl){
+	public void addOtherUrl(ExtractedFile otherUrl){
 		this.otherUrls.add(otherUrl);
 	}
 
-	public List<AppImage> getExtUrls() {
+	public List<ExtractedFile> getExtUrls() {
 		return extUrls;
 	}
 
-	public void setExtUrls(List<AppImage> extUrls) {
+	public void setExtUrls(List<ExtractedFile> extUrls) {
 		this.extUrls = extUrls;
 	}
 	
-	public void addExtUrl(AppImage extUrl){
+	public void addExtUrl(ExtractedFile extUrl){
 		this.extUrls.add(extUrl);
 	}
 	

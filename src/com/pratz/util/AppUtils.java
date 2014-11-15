@@ -42,6 +42,15 @@ public class AppUtils {
 		}
 	}
 	
+	/**
+	 * Download a provided file 
+	 * 
+	 * @param url
+	 * @param filePath
+	 * @param parent
+	 * @return
+	 * @throws IOException
+	 */
 	public static File downloadFile(String url, String filePath, File parent) throws IOException{
 		File file = null;
 		if(url!=null && filePath != null){
