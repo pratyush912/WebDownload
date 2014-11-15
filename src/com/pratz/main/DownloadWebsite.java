@@ -2,7 +2,9 @@ package com.pratz.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
@@ -15,8 +17,24 @@ import com.pratz.util.UrlDownloader;
 
 public class DownloadWebsite {
 	
-	private DownloadWebsite() {
-		// 
+	private Set<String> downloadedFiles;
+	private File parentDir;
+	private String url;
+	private String filePath;
+
+	
+	public DownloadWebsite(Set<String> downloadedFiles, File parentDir, String url, String filePath) {
+		if(downloadedFiles==null){
+			downloadedFiles = new HashSet<>();
+		}
+		this.downloadedFiles = downloadedFiles;
+		this.parentDir = parentDir;
+		this.url = url;
+		this.filePath = filePath;
+	}
+	
+	public DownloadWebsite(String url){
+		this(null,null,url,null);
 	}
 	
 	
@@ -29,47 +47,53 @@ public class DownloadWebsite {
 	 * @return
 	 * @throws IOException
 	 */
-	public static File download(File parentDir, String url) throws IOException {
+/*	public static File download(File parentDir, String url) throws IOException {
 		return download(parentDir, url,null);
 	}
-	
-	public static File download(File parentDir, String url, String filePath) throws IOException {
+*/	
+	public File download() throws IOException {
 		UrlDownloader urlDownload = new UrlDownloader();
 		Document document = urlDownload.downloadUrl(url);
 		
-		if(parentDir==null){
-			parentDir = AppUtils.createUniqueDir();
+		if(document!=null){
+		
+			if(parentDir==null){
+				parentDir = AppUtils.createUniqueDir();
+			}
+
+			urlDownload.writeToFile(parentDir,filePath);
+
+			Carrier carrier = HtmlParser.parseHTML(document);
+
+			List<AppImage> cssUrls = carrier.getCssUrls();
+			List<AppImage> jsUrls = carrier.getJsUrls();
+			List<AppImage> imgUrls = carrier.getImageUrls();
+			List<AppImage> otherUrls = carrier.getOtherUrls();
+
+			downloadFiles(cssUrls,parentDir);
+			downloadFiles(jsUrls,parentDir);
+			downloadFiles(imgUrls,parentDir);
+			downloadFileRecursively(otherUrls,parentDir);
+
 		}
-		
-		urlDownload.writeToFile(parentDir,filePath);
-		
-		Carrier carrier = HtmlParser.parseHTML(document);
-		
-		List<AppImage> cssUrls = carrier.getCssUrls();
-		List<AppImage> jsUrls = carrier.getJsUrls();
-		List<AppImage> imgUrls = carrier.getImageUrls();
-		List<AppImage> otherUrls = carrier.getOtherUrls();
-		
-		downloadFiles(cssUrls,parentDir);
-		downloadFiles(jsUrls,parentDir);
-		downloadFiles(imgUrls,parentDir);
-		downloadFileRecursively(otherUrls,parentDir);
 		
 		return parentDir;
 	}
 	
-	private static void downloadFileRecursively(List<AppImage> fileUrls, File parentDir) {
+	private void downloadFileRecursively(List<AppImage> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {
 					
-					modifyUrl(url);
-//					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
-					File downloadFile = new File(parentDir.getAbsolutePath()+url.getStoreUrl());
-					if(downloadFile.exists()){
-						continue;
+					if(modifyUrl(url)){
+						//					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
+						File downloadFile = new File(parentDir.getAbsolutePath()+url.getStoreUrl());
+						if(downloadFile.exists()){
+							continue;
+						}
+						DownloadWebsite downWeb = new DownloadWebsite(downloadedFiles, parentDir, url.getDownloadUrl(), url.getStoreUrl());
+						downWeb.download();
 					}
-					DownloadWebsite.download(parentDir, url.getDownloadUrl(),url.getStoreUrl());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -77,12 +101,13 @@ public class DownloadWebsite {
 		}
 	}
 
-	private static void downloadFiles(List<AppImage> fileUrls, File parentDir) {
+	private void downloadFiles(List<AppImage> fileUrls, File parentDir) {
 		if(!fileUrls.isEmpty()){
 			for(AppImage url : fileUrls){
 				try {
-					modifyUrl(url);
-					AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);
+					if(modifyUrl(url)){
+						AppUtils.downloadFile(url.getDownloadUrl(), url.getStoreUrl(), parentDir);	
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -91,7 +116,7 @@ public class DownloadWebsite {
 	}
 
 
-	private static void modifyUrl(AppImage url) {
+	private boolean modifyUrl(AppImage url) {
 		switch (SourceIdentifier.identifySource(url.getStoreUrl())) {
 		case DIRECTORY:
 			url.setStoreUrl(url.getStoreUrl()+ "index.html");
@@ -107,6 +132,10 @@ public class DownloadWebsite {
 		default:
 			break;
 		}
+		if(downloadedFiles.contains(url.getStoreUrl())){
+			return false;
+		}
+		return true;
 	}
 
 }

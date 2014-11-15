@@ -21,11 +21,11 @@ public class UrlDownloader {
 		}catch(MalformedURLException e){
 			System.err.println("The url is not proper" + e);
 		}catch(HttpStatusException e){
-			
+			e.printStackTrace();
 		}catch(UnsupportedMimeTypeException e){
-			
+			e.printStackTrace();
 		}catch(SocketTimeoutException e){
-			
+			e.printStackTrace();
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
