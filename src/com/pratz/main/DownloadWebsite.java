@@ -42,12 +42,21 @@ public class DownloadWebsite {
 	private String filePath;
 	
 	/**
+	 * depth for the download
+	 */
+	private int depth;
+	
+	/**
 	 * Takes a url as an input
 	 * 
 	 * @param url
 	 */
 	public DownloadWebsite(String url){
 		this(null,null,url,null);
+	}
+	
+	public DownloadWebsite(String url, int depth){
+		this(null,null,url,null,depth);
 	}
 
 	
@@ -60,6 +69,10 @@ public class DownloadWebsite {
 	 * @param filePath
 	 */
 	private DownloadWebsite(Set<String> downloadedFiles, File parentDir, String url, String filePath) {
+		this(downloadedFiles, parentDir, url, filePath, -1);
+	}
+	
+	private DownloadWebsite(Set<String> downloadedFiles, File parentDir, String url, String filePath, int depth){
 		if(downloadedFiles==null){
 			downloadedFiles = new HashSet<>();
 		}
@@ -67,6 +80,7 @@ public class DownloadWebsite {
 		this.parentDir = parentDir;
 		this.url = url;
 		this.filePath = filePath;
+		this.depth  = depth;
 	}
 	
 	/**
@@ -87,12 +101,12 @@ public class DownloadWebsite {
 			}
 
 			urlDownload.writeToFile(parentDir,filePath);
+			
 			if(filePath!=null){
 				downloadedFiles.add(parentDir+filePath);	
 			}else{
 				downloadedFiles.add(parentDir+"/index.html");
 			}
-			
 			
 			
 			Carrier carrier = HtmlParser.parseHTML(document);
@@ -105,6 +119,17 @@ public class DownloadWebsite {
 			downloadFiles(cssUrls,parentDir);
 			downloadFiles(jsUrls,parentDir);
 			downloadFiles(imgUrls,parentDir);
+			
+			
+			//decrement depth in every iteration
+			if(depth>-1){
+				depth--;
+				if(depth<0){
+					// returning... not downloading files present in the link
+					return parentDir;
+				}
+			}
+			
 			downloadFileRecursively(otherUrls,parentDir);
 
 		}
@@ -122,13 +147,12 @@ public class DownloadWebsite {
 		if(!fileUrls.isEmpty()){
 			for(ExtractedFile url : fileUrls){
 				try {
-					
 					if(modifyUrl(url)){
 						File downloadFile = new File(parentDir.getAbsolutePath()+url.getStoreUrl());
 						if(downloadFile.exists()){
 							continue;
 						}
-						DownloadWebsite downWeb = new DownloadWebsite(downloadedFiles, parentDir, url.getDownloadUrl(), url.getStoreUrl());
+						DownloadWebsite downWeb = new DownloadWebsite(downloadedFiles, parentDir, url.getDownloadUrl(), url.getStoreUrl(),depth);
 						downWeb.download();
 					}
 				} catch (IOException e) {
