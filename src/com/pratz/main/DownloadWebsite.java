@@ -47,7 +47,7 @@ public class DownloadWebsite {
 	private int depth;
 	
 	/**
-	 * Takes a url as an input
+	 * Takes a url as an input and downloads it recursively
 	 * 
 	 * @param url
 	 */
@@ -55,6 +55,16 @@ public class DownloadWebsite {
 		this(null,null,url,null);
 	}
 	
+	/**
+	 * Takes a url as an input and download it to the given depth <br>
+	 * If a depth is less than zero it will download all the linked urls recursively<br>
+	 * 
+	 * <b>Example 1: </b> For downloading the first page just use depth as 0 <br>
+	 * <b>Example 2: </b> For downloading to depth one use 1
+	 * 
+	 * @param url
+	 * @param depth
+	 */
 	public DownloadWebsite(String url, int depth){
 		this(null,null,url,null,depth);
 	}
